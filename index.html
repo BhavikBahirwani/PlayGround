@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#101510">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%99%8C%3C/text%3E%3C/svg%3E">
+<title>Gilded Grounds — The Lion's Run</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+:root{--ink:#121812;--cream:#f3ead4;--gold:#e4b954;--muted:#9a9d8e;--glass:rgba(17,23,18,.78)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111710;color:var(--cream);font-family:'DM Sans',sans-serif}button{font:inherit;color:inherit}#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;outline:none}
+#vignette{position:fixed;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(6,10,7,.46),transparent 25%,transparent 68%,rgba(5,9,6,.45)),radial-gradient(ellipse at center,transparent 35%,rgba(7,11,8,.35) 100%);z-index:1}
+.topbar{position:fixed;z-index:3;top:24px;left:30px;right:30px;display:flex;align-items:flex-start;justify-content:space-between;pointer-events:none}.brand{display:flex;align-items:center;gap:12px}.brand-mark{width:42px;height:42px;border:1px solid rgba(228,185,84,.68);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:23px;background:rgba(15,21,15,.5);box-shadow:0 0 25px #e4b95422}.brand-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;letter-spacing:.08em}.brand-sub{font-size:9px;letter-spacing:.25em;color:#c5b88f;margin-top:3px}.hud{display:flex;gap:10px;pointer-events:auto}.stat{min-width:106px;padding:10px 15px;background:var(--glass);border:1px solid #e8d6a224;border-radius:12px;backdrop-filter:blur(14px)}.stat-label{font-size:9px;letter-spacing:.18em;color:#b9b69f;text-transform:uppercase}.stat-value{font-size:20px;font-weight:700;line-height:1.2;color:#fff4d8}.stat-value span{color:var(--gold)}
+.left-rail{position:fixed;z-index:3;left:30px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px}.rail-card{width:190px;padding:14px 15px;border:1px solid #e8d6a21e;border-radius:12px;background:var(--glass);backdrop-filter:blur(14px)}.rail-kicker{font-size:9px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase}.rail-title{font-family:'Playfair Display',serif;font-size:16px;margin:6px 0}.rail-copy{font-size:11px;color:#c5c6b7;line-height:1.5}.meter{height:3px;background:#ffffff20;border-radius:9px;margin-top:11px;overflow:hidden}.meter-fill{height:100%;width:0;background:linear-gradient(90deg,#c2943f,#fff0aa);transition:width .25s}
+.bottom-hint{position:fixed;z-index:3;left:50%;bottom:22px;transform:translateX(-50%);display:flex;align-items:center;gap:9px;padding:9px 14px;border:1px solid #f0dfb326;border-radius:30px;background:rgba(15,21,15,.68);backdrop-filter:blur(12px);color:#e6dec8;font-size:10px;letter-spacing:.05em;white-space:nowrap;transition:opacity .5s}.key{display:inline-grid;place-items:center;min-width:22px;height:21px;padding:0 5px;border:1px solid #eee0be55;border-radius:5px;color:#fff3d4;font-size:10px;background:#fff1d20c}.sep{width:1px;height:14px;background:#fff2d433;margin:0 3px}
+.sound-btn{position:fixed;z-index:4;right:30px;bottom:24px;width:40px;height:40px;border-radius:50%;border:1px solid #f0dfb333;background:var(--glass);color:var(--cream);cursor:pointer;font-size:16px}.overlay{position:fixed;z-index:5;inset:0;display:grid;place-items:center;background:rgba(7,11,8,.33);backdrop-filter:blur(4px);transition:opacity .4s,visibility .4s}.overlay.hidden{opacity:0;visibility:hidden;pointer-events:none}.panel{width:min(520px,calc(100vw - 36px));padding:42px 44px 38px;text-align:center;border:1px solid #e9c97755;border-radius:22px;background:linear-gradient(145deg,rgba(30,38,27,.95),rgba(14,20,16,.96));box-shadow:0 28px 100px #0009, inset 0 1px #fff2;position:relative;overflow:hidden}.panel:before{content:'';position:absolute;inset:-1px;background:radial-gradient(ellipse at 50% -20%,#ddaf4b20,transparent 60%);pointer-events:none}.eyebrow{font-size:10px;color:var(--gold);letter-spacing:.3em;text-transform:uppercase;position:relative}.panel h1{font-family:'Playfair Display',serif;font-size:clamp(34px,6vw,51px);line-height:1.04;margin:15px 0 13px;color:#fff5df;position:relative}.panel p{font-size:13px;line-height:1.7;color:#c5c6b7;max-width:380px;margin:0 auto 25px;position:relative}.play-btn{position:relative;border:0;border-radius:999px;background:linear-gradient(135deg,#f3d37e,#c89439);color:#201b0e;font-weight:700;font-size:12px;letter-spacing:.15em;text-transform:uppercase;padding:15px 28px;cursor:pointer;box-shadow:0 8px 26px #d4a84c40;transition:transform .2s,box-shadow .2s}.play-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px #d4a84c65}.fineprint{font-size:10px;color:#939989;margin-top:17px;position:relative}.mobile-controls{display:none;position:fixed;z-index:4;bottom:20px;left:18px;right:18px;justify-content:space-between;pointer-events:none}.dpad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,42px);gap:4px;pointer-events:auto}.touch-key{border:1px solid #f4e3b544;border-radius:10px;background:#101810b8;backdrop-filter:blur(8px);color:#fff2cf;font-size:18px;touch-action:none}.touch-key[data-dir=up]{grid-column:2}.touch-key[data-dir=left]{grid-column:1;grid-row:2}.touch-key[data-dir=down]{grid-column:2;grid-row:2}.touch-key[data-dir=right]{grid-column:3;grid-row:2}.dash-touch{pointer-events:auto;align-self:end;width:70px;height:58px;border-radius:50%;border:1px solid #e4b95488;background:#d5a64955;color:#fff2cf;letter-spacing:.08em;font-size:10px;touch-action:none}
+.toast{position:fixed;z-index:4;top:100px;left:50%;transform:translate(-50%,-10px);padding:11px 18px;border-radius:999px;border:1px solid #e9c97755;background:#172018e8;color:#fff2cf;font-size:12px;letter-spacing:.04em;opacity:0;transition:.3s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:700px){.topbar{top:14px;left:14px;right:14px}.brand-mark{width:34px;height:34px;font-size:19px}.brand-name{font-size:14px}.brand-sub{font-size:8px}.hud{gap:6px}.stat{min-width:72px;padding:8px 9px}.stat-label{font-size:8px}.stat-value{font-size:17px}.left-rail{left:14px;top:auto;bottom:105px;transform:none}.rail-card{width:150px;padding:10px 12px}.rail-copy{font-size:10px}.rail-title{font-size:14px;margin:4px 0}.bottom-hint{bottom:14px;font-size:9px;padding:7px 10px}.sound-btn{right:14px;bottom:15px;width:34px;height:34px}.mobile-controls{display:flex}.panel{padding:34px 25px 29px}.panel p{font-size:12px}.desktop-only{display:none}}
+</style>
+</head>
+<body>
+<div id="game"></div><div id="vignette"></div>
+<header class="topbar"><div class="brand"><div class="brand-mark">♌</div><div><div class="brand-name">GILDED GROUNDS</div><div class="brand-sub">THE LION'S RUN</div></div></div><div class="hud"><div class="stat"><div class="stat-label">Royal seals</div><div class="stat-value"><span id="score">00</span><span style="color:#a7a48f"> / 08</span></div></div><div class="stat"><div class="stat-label">Time left</div><div class="stat-value" id="timer">75<span style="font-size:12px;color:#c9c4ae">s</span></div></div></div></header>
+<aside class="left-rail"><div class="rail-card"><div class="rail-kicker">The challenge</div><div class="rail-title">Claim the crown</div><div class="rail-copy">Gather every royal seal before the clock runs out. Watch your step around the thorn wards.</div><div class="meter"><div class="meter-fill" id="progress"></div></div></div></aside>
+<div class="bottom-hint" id="hint"><span class="desktop-only"><kbd class="key">W</kbd><kbd class="key">A</kbd><kbd class="key">S</kbd><kbd class="key">D</kbd> move <span class="sep"></span><kbd class="key">SPACE</kbd> dash <span class="sep"></span></span><span>collect all 8 seals</span></div>
+<div class="toast" id="toast">A royal seal collected</div><button class="sound-btn" id="sound" aria-label="Toggle sound">♫</button>
+<div class="mobile-controls"><div class="dpad"><button class="touch-key" data-dir="up">↑</button><button class="touch-key" data-dir="left">←</button><button class="touch-key" data-dir="down">↓</button><button class="touch-key" data-dir="right">→</button></div><button class="dash-touch" id="dash-touch">DASH</button></div>
+<div class="overlay" id="overlay"><section class="panel"><div class="eyebrow" id="panel-eyebrow">A royal trial awaits</div><h1 id="panel-title">The Lion's<br>Run</h1><p id="panel-copy">A little courage, a steady stride. Gather the eight golden seals scattered through the garden before time slips away.</p><button class="play-btn" id="play">Enter the garden</button><div class="fineprint" id="panel-foot">WASD / ARROWS to move &nbsp;·&nbsp; SPACE to dash</div></section></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
+// Scene and renderer
+const host=document.querySelector('#game');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x1b2b26);scene.fog=new THREE.Fog(0x1b2b26,19,48);
+const camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,.1,100);camera.position.set(0,10.5,16);camera.lookAt(0,1.1,0);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;host.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xc9e1d4,0x423629,2.1));
+const keyLight=new THREE.DirectionalLight(0xffe6ad,3.8);keyLight.position.set(-5,12,8);keyLight.castShadow=true;keyLight.shadow.mapSize.set(2048,2048);keyLight.shadow.camera.left=-16;keyLight.shadow.camera.right=16;keyLight.shadow.camera.top=20;keyLight.shadow.camera.bottom=-16;scene.add(keyLight);
+const rimLight=new THREE.DirectionalLight(0xe4b954,2.2);rimLight.position.set(7,7,-8);scene.add(rimLight);
+const mats={cream:new THREE.MeshStandardMaterial({color:0xf2e5c7,roughness:.72}),mane:new THREE.MeshStandardMaterial({color:0xd9c69e,roughness:.86}),maneLight:new THREE.MeshStandardMaterial({color:0xe9d9b8,roughness:.82}),gold:new THREE.MeshStandardMaterial({color:0xd6a842,metalness:.78,roughness:.25}),goldLight:new THREE.MeshStandardMaterial({color:0xf2cf76,metalness:.72,roughness:.22}),suit:new THREE.MeshStandardMaterial({color:0xe8dec9,roughness:.68}),suitShade:new THREE.MeshStandardMaterial({color:0xcac0ad,roughness:.72}),shirt:new THREE.MeshStandardMaterial({color:0xfff9eb,roughness:.6}),dark:new THREE.MeshStandardMaterial({color:0x49382d,roughness:.72}),nose:new THREE.MeshStandardMaterial({color:0x302a25,roughness:.35}),iris:new THREE.MeshStandardMaterial({color:0xb88629,roughness:.24}),black:new THREE.MeshStandardMaterial({color:0x171811,roughness:.3}),leaf:new THREE.MeshStandardMaterial({color:0x536d50,roughness:.8}),leaf2:new THREE.MeshStandardMaterial({color:0x87916a,roughness:.8}),stone:new THREE.MeshStandardMaterial({color:0x687a6a,roughness:.88}),stone2:new THREE.MeshStandardMaterial({color:0x425749,roughness:.92}),red:new THREE.MeshStandardMaterial({color:0x973b32,roughness:.5}),glow:new THREE.MeshStandardMaterial({color:0xffd66c,emissive:0xd6941e,emissiveIntensity:1.3,metalness:.4,roughness:.25})};
+function mesh(geo,mat,parent,x=0,y=0,z=0){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function box(parent,mat,x,y,z,sx,sy,sz,r=0){let m=mesh(new THREE.BoxGeometry(sx,sy,sz),mat,parent,x,y,z);if(r)m.rotation.y=r;return m}
+function sphere(parent,mat,x,y,z,sx,sy,sz){const m=mesh(new THREE.SphereGeometry(1,20,16),mat,parent,x,y,z);m.scale.set(sx,sy,sz);return m}
+function cylinder(parent,mat,x,y,z,rt,rb,h,segments=12){return mesh(new THREE.CylinderGeometry(rt,rb,h,segments),mat,parent,x,y,z)}
+function capsule(parent,mat,x,y,z,r,h){return mesh(new THREE.CapsuleGeometry(r,h,4,10),mat,parent,x,y,z)}
+function lineTube(parent,points,mat,r=.025){const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));return mesh(new THREE.TubeGeometry(curve,24,r,8,false),mat,parent)}
+
+// Art-deco courtyard
+const floor=mesh(new THREE.PlaneGeometry(42,42),new THREE.MeshStandardMaterial({color:0x596a5c,roughness:.94}),scene,0,-.12,0);floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;
+const dais=mesh(new THREE.CylinderGeometry(11,11.5,.28,64),mats.stone,scene,0,-.04,0);dais.receiveShadow=true;
+const inset=mesh(new THREE.CylinderGeometry(9.8,10,.08,64),mats.stone2,scene,0,.12,0);
+// layered round arena edges
+const rim=mesh(new THREE.TorusGeometry(10.2,.11,10,96),mats.gold,scene,0,.17,0);rim.rotation.x=Math.PI/2;
+const ground=mesh(new THREE.CircleGeometry(9.95,64),new THREE.MeshStandardMaterial({color:0x87917a,roughness:.92}),scene,0,.19,0);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;
+for(let r of [3.2,6.1,9.25]){const ring=mesh(new THREE.TorusGeometry(r,.018,6,96),new THREE.MeshStandardMaterial({color:0xc5a75f,metalness:.65,roughness:.4}),scene,0,.205,0);ring.rotation.x=Math.PI/2;}
+// radial paving seams
+for(let i=0;i<16;i++){const a=i*Math.PI/8;const g=box(scene,new THREE.MeshStandardMaterial({color:0x7d896f,roughness:.9}),Math.cos(a)*6.5,.205,Math.sin(a)*6.5,6.4,.015,.025,a);}
+// distant garden walls and lantern columns
+for(let i=0;i<12;i++){const a=i*Math.PI/6,x=Math.sin(a)*13,z=Math.cos(a)*13;const pillar=box(scene,mats.stone2,x,1.45,z,.72,2.9,.72,a);box(scene,mats.stone,x,2.95,z,1.05,.2,1.05,a);box(scene,mats.gold,x,1.95,z,.78,.045,.78,a);const lamp=mesh(new THREE.SphereGeometry(.18,12,10),mats.glow,scene,x,3.25,z);lamp.castShadow=false;}
+// clipped hedge planters, ornamental palms
+for(let i=0;i<8;i++){const a=(i+.5)*Math.PI/4,x=Math.sin(a)*8.55,z=Math.cos(a)*8.55;const pot=mesh(new THREE.CylinderGeometry(.42,.52,.52,8),mats.stone2,scene,x,.45,z);box(scene,mats.gold,x,.73,z,.68,.08,.68,a);for(let j=0;j<5;j++){const ang=j*1.25;let l=sphere(scene,j%2?mats.leaf:mats.leaf2,x+Math.cos(ang)*.2,1+Math.random()*.16,z+Math.sin(ang)*.2,.36,.25,.32);}}
+// distant art deco arches
+for(let side of [-1,1]){for(let j=0;j<3;j++){const x=side*(11.9+j*.16),z=-5+j*5.2;box(scene,mats.stone2,x,2.3,z,.32,4.6,.38);box(scene,mats.gold,x,4.65,z,.6,.16,.6);}}
+
+// Hero: a proud lion in a cream three-piece suit, built from clean sculpted forms.
+const hero=new THREE.Group();scene.add(hero);hero.position.set(0,.22,0);
+const body=new THREE.Group();hero.add(body);
+// legs, polished shoes
+const legL=new THREE.Group(),legR=new THREE.Group();body.add(legL,legR);legL.position.set(-.31,0,0);legR.position.set(.31,0,0);
+for(const [g,x] of [[legL,0],[legR,0]]){capsule(g,mats.suit,x,.78,0,.19,.68);box(g,mats.suitShade,x,.38,0,.36,.12,.38);}
+const shoeL=mesh(new THREE.SphereGeometry(1,18,12),mats.black,legL,-.02,.16,.17);shoeL.scale.set(.24,.14,.42);const shoeR=mesh(new THREE.SphereGeometry(1,18,12),mats.black,legR,-.02,.16,.17);shoeR.scale.set(.24,.14,.42);
+box(body,mats.gold,0,1.16,0,.74,.08,.39); // waistcoat belt seam
+// tailored jacket torso
+const jacket=mesh(new THREE.CapsuleGeometry(.48,.78,6,16),mats.suit,body,0,1.75,0);jacket.scale.set(1,.82,.59);
+// shirt front bib
+box(body,mats.shirt,0,1.88,.275,.25,.92,.035);
+// waistcoat panels
+for(let s of [-1,1]){const vest=box(body,mats.suitShade,s*.13,1.68,.30,.15,.61,.038,s*-.07);}
+// jacket lapels - gold piping and folded cream lapels
+for(let s of [-1,1]){const l=box(body,mats.gold,s*.22,2.16,.31,.095,.72,.035,s*.24);l.rotation.z=s*-.25;const lap=box(body,mats.suit,s*.18,2.18,.34,.12,.65,.045,s*-.25);lap.rotation.z=s*.24;}
+// gold waistcoat buttons
+for(let y of [1.46,1.66,1.86,2.06]){mesh(new THREE.SphereGeometry(.045,12,10),mats.goldLight,body,.045,y,.345);}
+// jacket sleeves / cuffs
+const arms=[];for(let s of [-1,1]){const arm=new THREE.Group();body.add(arm);arm.position.set(s*.58,2.02,0);arm.rotation.z=s*-.02;capsule(arm,mats.suit,s*.28,-.35,0,.16,.63);capsule(arm,mats.suit,s*.56,-.39,0,.145,.6);box(arm,mats.gold,s*.56,-.73,.005,.28,.09,.28);capsule(arm,mats.cream,s*.56,-.89,.02,.13,.2);arms.push(arm);for(let n=0;n<3;n++)mesh(new THREE.SphereGeometry(.026,8,6),mats.gold,arm,s*.56+(n-1)*.07,-.73,.155);}
+// jacket back half-belt
+box(body,mats.suitShade,0,1.57,-.29,.62,.12,.05);for(let s of [-1,1]){const b=mesh(new THREE.SphereGeometry(.04,10,8),mats.gold,body,s*.2,1.57,-.33);}
+// head and full cream mane
+const head=new THREE.Group();body.add(head);head.position.set(0,2.9,0);
+sphere(head,mats.mane,0,.02,0,.69,.78,.48);
+// flowing mane scallops framing face + long locks down nape
+for(let i=0;i<13;i++){const a=(i/13)*Math.PI*2;const x=Math.sin(a)*.56,y=Math.cos(a)*.56;let lock=sphere(head,i%3===0?mats.maneLight:mats.mane,x,y,-.02,.19,.39,.2);lock.rotation.z=-Math.sin(a)*.35;}
+for(let s of [-1,1]){for(let j=0;j<4;j++){const x=s*(.47-j*.07);const lock=sphere(head,j%2?mats.mane:mats.maneLight,x,-.48-j*.18,-.15,.18,.42,.2);lock.rotation.z=s*-.16;}}
+// ears
+for(let s of [-1,1]){sphere(head,mats.mane,s*.59,.52,0,.21,.23,.16);sphere(head,mats.dark,s*.63,.53,.12,.105,.12,.035);}
+// face mask and muzzle
+sphere(head,mats.cream,0,.12,.37,.45,.53,.25);
+sphere(head,mats.maneLight,0,-.22,.55,.31,.23,.23);for(let s of [-1,1])sphere(head,mats.cream,s*.17,-.16,.65,.18,.13,.13);
+sphere(head,mats.nose,0,-.015,.77,.13,.09,.08);
+// eyes, eye rims, confident lids
+for(let s of [-1,1]){sphere(head,mats.dark,s*.23,.26,.57,.13,.09,.04);sphere(head,mats.iris,s*.23,.26,.605,.083,.061,.035);sphere(head,mats.black,s*.23,.26,.632,.035,.05,.024);sphere(head,mats.shirt,s*.25,.285,.65,.018,.018,.012);const brow=box(head,mats.mane,s*.23,.39,.57,.24,.055,.05,s*-.13);}
+// mouth and nose detail
+lineTube(head,[[0,-.1,.77],[0,-.23,.77],[-.12,-.28,.72]],mats.dark,.018);lineTube(head,[[0,-.23,.77],[.12,-.28,.72]],mats.dark,.018);
+// mane engraved strands
+for(let s of [-1,1])for(let i=0;i<3;i++){lineTube(head,[[s*(.48+i*.035),.45-i*.12,.2],[s*(.58+i*.025),.06-i*.12,.2],[s*(.48+i*.04),-.36-i*.13,.19]],mats.maneLight,.012);}
+// necklace chain looping across chest
+const chainPts=[];for(let i=0;i<=28;i++){const t=i/28;chainPts.push([-.32+.64*t,2.5-.29*Math.sin(Math.PI*t),.41]);}lineTube(body,chainPts,mats.goldLight,.035);
+const pendant=mesh(new THREE.OctahedronGeometry(.16,1),mats.goldLight,body,0,2.11,.48);pendant.scale.set(.72,1.2,.4);mesh(new THREE.SphereGeometry(.045,12,10),mats.mane,body,0,2.12,.54);
+// subtle shoulder chain beads
+for(let i=0;i<8;i++){const t=i/7;mesh(new THREE.SphereGeometry(.035,10,8),mats.gold,body,-.32+t*.64,2.5-.29*Math.sin(Math.PI*t),.43);}
+
+// Collectible seals
+const seals=[];function addSeal(x,z){const g=new THREE.Group();scene.add(g);g.position.set(x,.85,z);const ring=mesh(new THREE.TorusGeometry(.29,.075,10,24),mats.goldLight,g);ring.rotation.x=Math.PI/2;const inner=mesh(new THREE.TorusGeometry(.14,.035,8,18),mats.gold,g);inner.rotation.x=Math.PI/2;const gem=mesh(new THREE.OctahedronGeometry(.12,0),mats.glow,g,0,0,0);gem.rotation.y=.3;const ray=mesh(new THREE.CylinderGeometry(.025,.025,.5,8),mats.gold,g,0,-.39,0);g.userData={ring,gem,ray,baseY:.85};seals.push(g);}
+function validPoint(used){let p;for(let tries=0;tries<200;tries++){let a=Math.random()*Math.PI*2,r=2+Math.random()*6.7;p={x:Math.cos(a)*r,z:Math.sin(a)*r};if(Math.hypot(p.x,p.z)<2.2)continue;if(used.every(q=>Math.hypot(p.x-q.x,p.z-q.z)>2.1))return p;}return p;}
+const sealPoints=[];for(let i=0;i<8;i++){const p=validPoint(sealPoints);sealPoints.push(p);addSeal(p.x,p.z);}
+// Thorn wards: animated red crystal clusters on the arena
+const hazards=[];for(let i=0;i<5;i++){const a=(i/5)*Math.PI*2+.4,r=4.5;const g=new THREE.Group();scene.add(g);g.position.set(Math.cos(a)*r,.22,Math.sin(a)*r);const base=mesh(new THREE.CylinderGeometry(.38,.48,.35,7),mats.red,g,0,.17,0);for(let n=0;n<3;n++){const spike=mesh(new THREE.ConeGeometry(.19,.62,6),mats.red,g,(n-1)*.25,.62,0);spike.rotation.z=(n-1)*-.28;}const ring=mesh(new THREE.TorusGeometry(.57,.025,6,24),mats.gold,g,0,.08,0);ring.rotation.x=Math.PI/2;hazards.push(g);}
+
+let state='ready',score=0,timeLeft=75,elapsed=0,last=performance.now(),dash=0,invuln=0,soundOn=false;const keys=new Set();let toastTimer;
+const scoreEl=document.querySelector('#score'),timerEl=document.querySelector('#timer'),progress=document.querySelector('#progress'),overlay=document.querySelector('#overlay'),playBtn=document.querySelector('#play');
+function setToast(text){const el=document.querySelector('#toast');el.textContent=text;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),1350)}
+function resetGame(){score=0;timeLeft=75;elapsed=0;hero.position.set(0,.22,0);hero.rotation.y=0;for(let i=0;i<seals.length;i++){seals[i].visible=true;const p=sealPoints[i];seals[i].position.set(p.x,.85,p.z);}updateHud();state='playing';overlay.classList.add('hidden');document.querySelector('#hint').style.opacity='0';setTimeout(()=>document.querySelector('#hint').style.opacity='1',4500);}
+function finish(win){state=win?'won':'lost';document.querySelector('#panel-eyebrow').textContent=win?'The garden remembers':'The clock has spoken';document.querySelector('#panel-title').innerHTML=win?'A crown<br>well earned':'Try once more';document.querySelector('#panel-copy').textContent=win?'Every seal returned to its place. The Gilded Grounds are yours, Your Majesty.':'The seals slipped away this time. Take a breath, steady your stride, and claim the crown.';playBtn.textContent='Play again';document.querySelector('#panel-foot').textContent=win?'Royal seals secured: 8 / 8':'You gathered '+String(score).padStart(2,'0')+' of 08 royal seals';overlay.classList.remove('hidden');}
+function updateHud(){scoreEl.textContent=String(score).padStart(2,'0');progress.style.width=(score/8*100)+'%';timerEl.innerHTML=Math.ceil(timeLeft)+'<span style="font-size:12px;color:#c9c4ae">s</span>';if(timeLeft<16)timerEl.style.color='#ff9979';else timerEl.style.color='';}
+function dashMove(){if(state==='playing'&&dash<=0){dash=.22;invuln=.32;}}
+playBtn.addEventListener('click',resetGame);addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys.add(e.key.toLowerCase());if(e.key===' '||e.key==='Shift')dashMove();if(e.key==='Enter'&&state!=='playing')resetGame();});addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
+const dirMap={up:'arrowup',down:'arrowdown',left:'arrowleft',right:'arrowright'};document.querySelectorAll('.touch-key').forEach(b=>{const d=dirMap[b.dataset.dir];b.addEventListener('pointerdown',e=>{e.preventDefault();keys.add(d);b.setPointerCapture(e.pointerId)});for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>keys.delete(d));});document.querySelector('#dash-touch').addEventListener('pointerdown',e=>{e.preventDefault();dashMove()});
+function playTone(freq=540,duration=.11){if(!soundOn)return;try{const ctx=playTone.ctx||(playTone.ctx=new AudioContext());const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.08,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+duration)}catch{}}
+document.querySelector('#sound').addEventListener('click',()=>{soundOn=!soundOn;document.querySelector('#sound').textContent=soundOn?'♫':'♪';if(soundOn)playTone(620)});
+
+function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.04);last=now;elapsed+=dt;
+  if(state==='playing'){timeLeft=Math.max(0,timeLeft-dt);if(timeLeft<=0)finish(false);if(dash>0)dash=Math.max(0,dash-dt);if(invuln>0)invuln=Math.max(0,invuln-dt);
+    let x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0);let z=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);const len=Math.hypot(x,z);if(len){x/=len;z/=len;const speed=dash>0?13:5.4;hero.position.x+=x*speed*dt;hero.position.z+=z*speed*dt;hero.rotation.y=Math.atan2(x,z);}
+    const dist=Math.hypot(hero.position.x,hero.position.z);if(dist>8.85){hero.position.x*=8.85/dist;hero.position.z*=8.85/dist;setToast('Mind the edge of the garden');}
+    // animated footsteps and dash shimmer
+    const moving=!!len;body.position.y=moving?Math.abs(Math.sin(elapsed*13))*.055:Math.sin(elapsed*2)*.018;legL.rotation.x=moving?Math.sin(elapsed*13)*.38:0;legR.rotation.x=moving?-Math.sin(elapsed*13)*.38:0;arms.forEach((a,i)=>a.rotation.x=moving?Math.sin(elapsed*13+i*Math.PI)*.17:Math.sin(elapsed*1.4+i)*.025);
+    if(dash>0){hero.scale.set(1.05,1,1.05);}else hero.scale.set(1,1,1);
+    for(const s of seals){if(!s.visible)continue;s.rotation.y+=dt*1.2;s.position.y=s.userData.baseY+Math.sin(elapsed*2.7+s.position.x)*.1;s.userData.ring.rotation.z+=dt*.7;s.userData.gem.rotation.y+=dt*2.1;if(hero.position.distanceTo(s.position)<.86){s.visible=false;score++;updateHud();playTone(700+score*60);setToast(['A royal seal collected','A fine find, Your Majesty','The crown draws nearer'][Math.floor(Math.random()*3)]);if(score>=8)finish(true);}}
+    for(let i=0;i<hazards.length;i++){const h=hazards[i];h.rotation.y=elapsed*(i%2?-.55:.7);h.position.y=.22+Math.sin(elapsed*1.8+i)*.06;if(hero.position.distanceTo(h.position)<.85&&invuln<=0){timeLeft=Math.max(0,timeLeft-7);invuln=.8;hero.position.x*=.8;hero.position.z*=.8;playTone(170,.2);setToast('Thorn ward!  Seven seconds lost');}}
+    updateHud();
+  } else {hero.rotation.y=Math.sin(elapsed*.32)*.17;body.position.y=Math.sin(elapsed*1.5)*.02;}
+  // camera eases after player, gently keeps the whole courtyard in frame
+  const desiredX=hero.position.x*.18;camera.position.x+= (desiredX-camera.position.x)*Math.min(1,dt*1.5);camera.lookAt(hero.position.x*.12,1.15,0);
+  for(const p of scene.children){if(p.userData?.drift)p.rotation.y+=dt*.3;}
+  renderer.render(scene,camera);
+}
+requestAnimationFrame(animate);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight)});
+</script>
+</body>
+</html>
